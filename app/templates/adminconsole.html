@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="formwrapper">
+  <h2 class="title">Contact</h2>
+  <form method="POST" action="/">
+      <div class="form-field">{{ form.name.label }} {{ form.name }}</div>
+      <div class="form-field">{{ form.category.label }} {{ form.category }}</div>
+      <div class="form-field">{{ form.price.label }} {{ form.price }}</div>
+      <div class="form-field">{{ form.stock.label }} {{ form.stock }}</div>
+      <div class="form-field">{{ form.img.label }} {{ form.img }}</div>
+      {{ form.submit }}
+  </form>
+</div>
+{% endblock %}
