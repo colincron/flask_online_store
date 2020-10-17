@@ -26,6 +26,12 @@ def get_all_products():
     cursor.close()
     return results
 
+def get_all_users():
+    cursor = get_db().execute("select * from user;", ())
+    results = cursor.fetchall()
+    cursor.close()
+    return results
+
 def create_user():
     cursor = get_db().execute("insert into user values ('Test', 'LastName', 'skiing');")
     cursor.close()
@@ -45,15 +51,7 @@ def close_connection(exception):
 def index():
     return "Hello, World!"
 
-@app.route('/aboutme', methods=["GET"])
-def aboutme():
-    return {
-        "first_name": "Colin",
-        "last_name": "Cron",
-        "hobby": "Gardening"
-    }
-
-@app.route('/users', methods=["GET"])
+@app.route('/products', methods=["GET"])
 def get_products():
     out = {"ok": True, "body": ""}
     body_list = []
@@ -70,12 +68,33 @@ def get_products():
                 }
             body_list.append(temp_dict)
         out["body"] = body_list
-        return render_template("base.html", name=out["body"][0].get("Product Name"), category=out["body"][0].get("Category"), price=out["body"][0].get("Price"), stock=out["body"][0].get("Stock"), img_url=out["body"][0].get("IMG"))
+        return render_template("catalog.html", name=out["body"][0].get("Product Name"), category=out["body"][0].get("Category"), price=out["body"][0].get("Price"), stock=out["body"][0].get("Stock"), img_url=out["body"][0].get("IMG"))
     # if "POST" in request.method:
     #     create_user()
     # if "PUT" in request.method:
     #     update_user("last_name","Test","first_name", "Colin")
     
+@app.route('/users', methods=["GET"])
+def get_users():
+    out = {"ok": True, "body": ""}
+    body_list = []
+    if "GET" in request.method:
+        # get_all_users() returns all records from the user table
+        raw_data = get_all_users()
+        for item in raw_data:
+            temp_dict = {
+                "first_name": item[0],
+                "last_name": item[1],
+                "hobbies": item[2],
+                }
+            body_list.append(temp_dict)
+        out["body"] = body_list
+        return render_template("about_me.html", first_name=out["body"][0].get("first_name"), last_name=out["body"][0].get("last_name"), hobbies=out["body"][0].get("hobbies"))
+    # if "POST" in request.method:
+    #     create_user()
+    # if "PUT" in request.method:
+    #     update_user("last_name","Test","first_name", "Colin")
+
 @app.route('/countdown/<int:number>')
 def countdown(number):
     return "</br>".join([str(i) for i in range(number, 0, -1)])
