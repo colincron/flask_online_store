@@ -14,3 +14,4 @@ class NewProductForm(FlaskForm):
         DataRequired()])
     img = StringField('Image URL', [
         DataRequired()])
+    submit = SubmitField("Submit")

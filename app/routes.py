@@ -4,7 +4,7 @@
 
 from flask import g, request, render_template, url_for, redirect
 from app import app
-from forms import NewProductForm
+from app.forms import NewProductForm
 import sqlite3
 import os
 
@@ -36,6 +36,10 @@ def create_user():
     cursor = get_db().execute("insert into user values ('Test', 'LastName', 'skiing');")
     cursor.close()
 
+def create_product(name, category, price, stock, img):
+    cursor = get_db().execute("insert into products(prod_name, prod_cat, prod_price, prod_stock, prod_img) values ('%s', '%s','%s','%s','%s');" % (name, category, price, stock, img)) 
+    cursor.close()
+
 def update_user(toset, string1, whereset, string2  ):
     cursor = get_db().execute('update user set ' + toset + '=' + string1 + ' where ' + whereset + '=' + string2 + ';')
     cursor.close()
@@ -51,28 +55,27 @@ def close_connection(exception):
 def index():
     return "Hello, World!"
 
-@app.route('/products', methods=["GET"])
+@app.route('/products', methods=["GET","POST"])
 def get_products():
-    out = {"ok": True, "body": ""}
     body_list = []
     if "GET" in request.method:
         # get_all_users() returns all records from the user table
         raw_data = get_all_products()
         for item in raw_data:
             temp_dict = {
-                "Product Name": item[0],
-                "Category": item[1],
-                "Price": item[2],
-                "Stock": item[3],
-                "IMG": item[4]
+                "name": item[0],
+                "category": item[1],
+                "price": item[2],
+                "stock": item[3],
+                "img": item[4]
                 }
             body_list.append(temp_dict)
-        out["body"] = body_list
-        return render_template("catalog.html", name=out["body"][0].get("Product Name"), category=out["body"][0].get("Category"), price=out["body"][0].get("Price"), stock=out["body"][0].get("Stock"), img_url=out["body"][0].get("IMG"))
-    # if "POST" in request.method:
-    #     create_user()
-    # if "PUT" in request.method:
-    #     update_user("last_name","Test","first_name", "Colin")
+        return render_template("catalog.html", products = body_list)
+
+    if "POST" in request.method:
+        form=request.form
+        create_product(form["name"], form["category"], form["price"], form["stock"], form["img"])
+        return "Hello world!"
     
 @app.route('/users', methods=["GET"])
 def get_users():
@@ -107,4 +110,19 @@ def agent():
 @app.route('/adminconsole', methods=["GET", "POST"])
 def new_product():
     form = NewProductForm()
+    # if request.method == 'POST':
+    #     name = request.form.get('name')
+    #     category = request.form.get('category')
+    #     price = request.form.get('price')
+    #     stock = request.form.get('stock')
+    #     img = request.form.get('img')
+
     return render_template('adminconsole.html', form=form)
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
+
+@app.route('/user/<name>')
+def user(name):
+    return "<h1>Hello, %s!</h1>" % name

@@ -1,10 +1,12 @@
 {% extends "base.html" %}
+{% block title %} Online Store - About Me {% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="page-header">
         <h1>Hello, my name is {{ first_name }} {{ last_name }}</h1>
         <h1>My hobbies are: {{ hobbies }}</h1>
+        <a href={{ url_for("user", name="TEST")}}>Click!</a>
     </div>
 </div>
 {% endblock %}

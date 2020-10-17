@@ -1,13 +1,16 @@
 {% extends "base.html" %}
+{% block title %} Online Store - Products {% endblock %}
 
 {% block content %}
-
-        <div class="container">
-            <p>Product Name: {{ name }}</p>
-            <p>Category: {{ category }}</p>
-            <p>Price: {{ price }}</p>
-            <p>In stock: {{ stock }}</p>
-            <p>Img URL: {{ img_url }}</p>
-        </div>
-
+<div class="container">
+{% for product in products %}
+        
+            <p>Product Name: {{ product["name"] }}</p>
+            <p>Category: {{ product["category"] }}</p>
+            <p>Price: {{ product["price"] }}</p>
+            <p>In stock: {{ product["stock"] }}</p>
+            <p>Img URL: {{ product["img"] }}</p>
+       
+{% endfor %}
+</div>
 {% endblock %}
