@@ -1,6 +1,6 @@
 # flask_online_store
 
-127.0.0.1:5000/addproduct -> Add a product
+127.0.0.1:5000/addproduct -> Add a product /n
 127.0.0.1:5000/products -> View all products
 127.0.0.1:5000/updateproduct -> Modifies a product (Doesn't work yet)
 127.0.0.1:5000/deleteproduct -> **Coming soon**
