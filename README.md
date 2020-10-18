@@ -6,7 +6,7 @@
 <br>
 127.0.0.1:5000/updateproduct -> Modifies a product (Doesn't work yet)
 <br>
-127.0.0.1:5000/deleteproduct -> **Coming soon**
+127.0.0.1:5000/removeproduct -> Removes a product (Doesn't work yet)
 <br>
 127.0.0.1:5000/users -> View aboutme
 <br>
