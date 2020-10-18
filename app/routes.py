@@ -4,13 +4,13 @@
 
 from flask import g, request, render_template, url_for, redirect
 from app import app
-from app.forms import NewProductForm
+from app.forms import NewProductForm, UpdateProductForm
 import sqlite3
 import os
 
 
-SECRET_KEY = os.urandom(32)
-app.config['SECRET_KEY'] = SECRET_KEY
+# SECRET_KEY = os.urandom(32)
+# app.config['SECRET_KEY'] = SECRET_KEY
 
 DATABASE = "online_store"
 
@@ -37,8 +37,18 @@ def create_user():
     cursor.close()
 
 def create_product(name, category, price, stock, img):
-    cursor = get_db().execute("insert into products(prod_name, prod_cat, prod_price, prod_stock, prod_img) values ('%s', '%s','%s','%s','%s');" % (name, category, price, stock, img)) 
+    cursor = get_db().execute("insert into products values('%s','%s','%s','%s','%s')" % (name, category, price, stock, img))
+    conn = get_db()
+    conn.commit()
     cursor.close()
+    return "Item Submitted"
+
+def modify_product(old_name, select, change_to):
+    cursor = get_db().execute("update products set '%s'='%s' where prod_name='%s'" % (select, change_to, old_name))
+    conn = get_db()
+    conn.commit()
+    cursor.close()
+    return "Item modified!"
 
 def update_user(toset, string1, whereset, string2  ):
     cursor = get_db().execute('update user set ' + toset + '=' + string1 + ' where ' + whereset + '=' + string2 + ';')
@@ -55,7 +65,7 @@ def close_connection(exception):
 def index():
     return "Hello, World!"
 
-@app.route('/products', methods=["GET","POST"])
+@app.route('/products', methods=["GET","POST","PUT"])
 def get_products():
     body_list = []
     if "GET" in request.method:
@@ -71,11 +81,13 @@ def get_products():
                 }
             body_list.append(temp_dict)
         return render_template("catalog.html", products = body_list)
-
     if "POST" in request.method:
         form=request.form
-        create_product(form["name"], form["category"], form["price"], form["stock"], form["img"])
-        return "Hello world!"
+        return create_product(form["name"], form["category"], form["price"], form["stock"], form["img"])
+    if "PUT" in request.method:
+        form=request.form
+        return modify_product(form["old_name"], form["select"], form["change_to"])
+        
     
 @app.route('/users', methods=["GET"])
 def get_users():
@@ -107,17 +119,16 @@ def agent():
     user_agent = request.headers.get("User-Agent")
     return "<p>Your user agent is %s</p>" % user_agent
 
-@app.route('/adminconsole', methods=["GET", "POST"])
+@app.route('/addproduct', methods=["GET", "POST"])
 def new_product():
     form = NewProductForm()
-    # if request.method == 'POST':
-    #     name = request.form.get('name')
-    #     category = request.form.get('category')
-    #     price = request.form.get('price')
-    #     stock = request.form.get('stock')
-    #     img = request.form.get('img')
+    return render_template('addproduct.html', form=form)
 
-    return render_template('adminconsole.html', form=form)
+@app.route('/updateproduct', methods=["GET", "PUT"])
+def update_product():
+    form = UpdateProductForm()
+    return render_template('updateproduct.html', form=form)
+
 
 @app.errorhandler(404)
 def page_not_found(e):
