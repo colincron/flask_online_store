@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %} Online Store - Remove Product {% endblock %}
+
+{% block content %}
+<div class="formwrapper">
+  <div class=container">
+    <h2 class="title">Remove an Item</h2>
+    <form method="DELETE" action="/products">
+      {{ form.csrf_token }}
+        <div class="form-field">{{ form.name_to_remove.label }} {{ form.name_to_remove }}</div>
+        {{ form.submit }}
+    </form>
+  </div>
+</div>
+
+{% endblock %}

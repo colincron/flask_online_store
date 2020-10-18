@@ -24,3 +24,9 @@ class UpdateProductForm(FlaskForm):
     change_to = StringField('Change option to:', [
         DataRequired()])
     submit = SubmitField("Submit")
+
+class RemoveProductForm(FlaskForm):
+    """ Update Product Form """
+    name_to_remove = StringField('Product Name', [
+        DataRequired()])
+    submit = SubmitField("Submit")

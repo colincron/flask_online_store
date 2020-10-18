@@ -4,7 +4,7 @@
 
 from flask import g, request, render_template, url_for, redirect
 from app import app
-from app.forms import NewProductForm, UpdateProductForm
+from app.forms import NewProductForm, UpdateProductForm, RemoveProductForm
 import sqlite3
 import os
 
@@ -37,18 +37,25 @@ def create_user():
     cursor.close()
 
 def create_product(name, category, price, stock, img):
-    cursor = get_db().execute("insert into products values('%s','%s','%s','%s','%s')" % (name, category, price, stock, img))
-    conn = get_db()
-    conn.commit()
-    cursor.close()
+    db = get_db()
+    db.execute("insert into products values('%s','%s','%s','%s','%s')" % (name, category, price, stock, img))
+    db.commit()
+    db.close()
     return "Item Submitted"
 
 def modify_product(old_name, select, change_to):
-    cursor = get_db().execute("update products set '%s'='%s' where prod_name='%s'" % (select, change_to, old_name))
-    conn = get_db()
-    conn.commit()
+    cursor = get_db()
+    cursor.execute("update products set '%s'='%s' where prod_name='%s'" % (select, change_to, old_name))
+    cursor.commit()
     cursor.close()
-    return "Item modified!"
+    return "Item modified! (Unless this still doesn't work..."
+
+def remove_product(name):
+    cursor = get_db()
+    cursor.execute("delete from products where prod_name='%s';") % (name)
+    cursor.commit()
+    cursor.close()
+    return "Item deleted! (Unless this still doesn't work...)"
 
 def update_user(toset, string1, whereset, string2  ):
     cursor = get_db().execute('update user set ' + toset + '=' + string1 + ' where ' + whereset + '=' + string2 + ';')
@@ -68,6 +75,15 @@ def index():
 @app.route('/products', methods=["GET","POST","PUT"])
 def get_products():
     body_list = []
+    if "DELETE" in request.method:
+        form=request.form
+        return remove_product(form["name_to_remove"])
+    if "PUT" in request.method:
+        form=request.form
+        return modify_product(form["old_name"], form["select"], form["change_to"])
+    if "POST" in request.method:
+        form=request.form
+        return create_product(form["name"], form["category"], form["price"], form["stock"], form["img"])
     if "GET" in request.method:
         # get_all_users() returns all records from the user table
         raw_data = get_all_products()
@@ -81,12 +97,8 @@ def get_products():
                 }
             body_list.append(temp_dict)
         return render_template("catalog.html", products = body_list)
-    if "POST" in request.method:
-        form=request.form
-        return create_product(form["name"], form["category"], form["price"], form["stock"], form["img"])
-    if "PUT" in request.method:
-        form=request.form
-        return modify_product(form["old_name"], form["select"], form["change_to"])
+
+
         
     
 @app.route('/users', methods=["GET"])
@@ -94,7 +106,6 @@ def get_users():
     out = {"ok": True, "body": ""}
     body_list = []
     if "GET" in request.method:
-        # get_all_users() returns all records from the user table
         raw_data = get_all_users()
         for item in raw_data:
             temp_dict = {
@@ -129,6 +140,10 @@ def update_product():
     form = UpdateProductForm()
     return render_template('updateproduct.html', form=form)
 
+@app.route('/removeproduct', methods=["GET", "DELETE"])
+def delete_product():
+    form=RemoveProductForm()
+    return render_template('removeproduct.html', form=form)
 
 @app.errorhandler(404)
 def page_not_found(e):
