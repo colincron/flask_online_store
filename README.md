@@ -12,9 +12,9 @@
 <br>
 127.0.0.1:5000/users -> View aboutme
 <br>
-127.0.0.1:5000/countdown/<number> -> Countdown from <number>
+127.0.0.1:5000/countdown/*number* -> Countdown from *number*
 <br>
-127.0.0.1:5000/user/<name> -> Returns "Hello <name>"
+127.0.0.1:5000/user/*name* -> Returns "Hello *name*"
 <br>
 127.0.0.1:500/agent -> View current user agent
 <br>
