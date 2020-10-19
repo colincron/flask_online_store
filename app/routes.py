@@ -70,7 +70,7 @@ def close_connection(exception):
 
 @app.route('/')
 def index():
-    return "Hello, World!"
+    return render_template("index.html")
 
 @app.route('/products', methods=["GET","POST","PUT"])
 def get_products():
