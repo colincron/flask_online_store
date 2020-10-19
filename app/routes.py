@@ -98,9 +98,27 @@ def get_products():
             body_list.append(temp_dict)
         return render_template("catalog.html", products = body_list)
 
+@app.route('/products/<product_name>', methods=["GET"])
+def get_specific_product(product_name):
+    body_list = []
+    found = False
+    raw_data = get_all_products()
+    for item in raw_data:
+        if item[0] == product_name:
+            temp_dict = {
+                "name": item[0],
+                "category": item[1],
+                "price": item[2],
+                "stock": item[3],
+                "img": item[4]
+                }
+            body_list.append(temp_dict)
+            found = True
+            return render_template("catalog.html", products = body_list)
+    if found is False:
+        return "Not found, try again..."
 
-        
-    
+
 @app.route('/users', methods=["GET"])
 def get_users():
     out = {"ok": True, "body": ""}
