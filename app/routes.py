@@ -117,8 +117,7 @@ def get_specific_product(product_name):
             return render_template("catalog.html", products = body_list)
     if found is False:
         return "Not found, try again..."
-
-
+        
 @app.route('/users', methods=["GET"])
 def get_users():
     out = {"ok": True, "body": ""}
