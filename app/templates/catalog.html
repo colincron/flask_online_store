@@ -1,16 +1,23 @@
 {% extends "base.html" %}
 {% block title %} Online Store - Products {% endblock %}
 
+{% block styles %}
+{{super()}}
+<link rel="stylesheet"
+      href="{{url_for('.static', filename='css/style.css')}}">
+{% endblock %}
+
 {% block content %}
 <div class="container">
 {% for product in products %}
-        
+        <div class="container border-black">
             <p>Product Name: {{ product["name"] }}</p>
             <p>Category: {{ product["category"] }}</p>
             <p>Price: {{ product["price"] }}</p>
             <p>In stock: {{ product["stock"] }}</p>
             <p>Img URL: {{ product["img"] }}</p>
-       
+        </div>
 {% endfor %}
 </div>
+
 {% endblock %}
