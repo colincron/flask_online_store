@@ -8,16 +8,24 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-{% for product in products %}
-        <div class="container border-black">
-            <a href="products/{{ product['name'] }}"><p>{{ product["name"] }}</p></a>
-            <p>Category: {{ product["category"] }}</p>
-            <p>Price: {{ product["price"] }}</p>
-            <p>In stock: {{ product["stock"] }}</p>
-            <p>Img URL: {{ product["img"] }}</p>
-        </div>
-{% endfor %}
+<div class="container-fluid">
+    <div class="container col-md-4">
+        {% for product in products %}
+        <div class="item-name"><a href="products/{{ product['name'] }}">{{ product["name"] }}</a></div>
+        {% endfor %}
+    </div>
+    <div class="container flexbox col-md-8">
+    {% for product in products %}
+    <a href="products/{{ product['name'] }}">
+            <div class="container border-black">
+                <p style="font-size: large;">{{ product["name"] }}</p>
+                <p>Category: {{ product["category"] }}</p>
+                <p>Price: ${{ product["price"] }}</p>
+                <p>In stock: {{ product["stock"] }}</p>
+                <p><img src="http://picsum.photos/200/200"></p>
+            </div>
+        </a>
+    {% endfor %}
+    </div>
 </div>
-
 {% endblock %}

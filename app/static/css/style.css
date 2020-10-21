@@ -1,5 +1,39 @@
-.border-black {
+.item-name{
     border: 1px solid black;
-    width: 400px !important;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 5px;
+    text-align: center;
+    font-size: larger;
+}
+.item-name:hover{
+    background-color: grey;
+    color:yellow;
+    box-shadow: 2px 3px black;
 }
 
+.flexbox{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.border-black {
+    border: 1px solid black;
+    border-radius: 10px;
+    box-shadow: 2px 3px grey;
+    width: 400px !important;
+    margin: 10px;
+    padding: 10px;
+    text-align: center;
+}
+
+a{
+    color: black;
+    font-weight: 200;
+}
+
+a:hover{
+    text-decoration: none;
+    color: black;
+}
