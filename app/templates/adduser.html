@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %} Online Store - Add User {% endblock %}
+
+{% block content %}
+<div class="formwrapper">
+  <div class="container">
+    <h4 class="title">Add a User:</h2>
+    <form method="POST" action="/users">
+      {{ form.csrf_token }}
+        <div class="form-field">{{ form.first_name.label }} {{ form.first_name }}</div>
+        <div class="form-field">{{ form.last_name.label }} {{ form.last_name }}</div>
+        <div class="form-field">{{ form.hobbies.label }} {{ form.hobbies }}</div>
+        {{ form.submit }}
+    </form>
+  </div>
+</div>
+
+
+
+{% endblock %}

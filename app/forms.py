@@ -30,3 +30,12 @@ class RemoveProductForm(FlaskForm):
     name_to_remove = StringField('Product Name', [
         DataRequired()])
     submit = SubmitField("Submit")
+
+class AddUserForm(FlaskForm):
+    """ Add User Form """
+    first_name = StringField('First Name', [
+        DataRequired()])
+    last_name = StringField('Last Name', [
+        DataRequired()])
+    hobbies = StringField('Hobbies',[])
+    submit = SubmitField("Submit")

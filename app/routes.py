@@ -4,70 +4,26 @@
 
 from flask import g, request, render_template, url_for, redirect
 from app import app
-from app.forms import NewProductForm, UpdateProductForm, RemoveProductForm
+from app.forms import NewProductForm, UpdateProductForm, RemoveProductForm, AddUserForm
 import sqlite3
 import os
-
-
+from flask_sqlalchemy import SQLAlchemy
+from app.users import get_all_users, create_user, update_user
+from app.products import get_all_products, create_product, modify_product, remove_product
+from app.db import get_db
 # SECRET_KEY = os.urandom(32)
 # app.config['SECRET_KEY'] = SECRET_KEY
 
 DATABASE = "online_store"
 
-def get_db():
-    db = getattr(g, "_database", None)
-    if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
-    return db
 
-def get_all_products():
-    cursor = get_db().execute("select * from products;", ())
-    results = cursor.fetchall()
-    cursor.close()
-    return results
 
-def get_all_users():
-    cursor = get_db().execute("select * from user;", ())
-    results = cursor.fetchall()
-    cursor.close()
-    return results
-
-def create_user():
-    cursor = get_db().execute("insert into user values ('Test', 'LastName', 'skiing');")
-    cursor.close()
-
-def create_product(name, category, price, stock, img):
-    db = get_db()
-    db.execute("insert into products values('%s','%s','%s','%s','%s')" % (name, category, price, stock, img))
-    db.commit()
-    db.close()
-    return "Item Submitted"
-
-def modify_product(old_name, select, change_to):
-    cursor = get_db()
-    cursor.execute("update products set '%s'='%s' where prod_name='%s'" % (select, change_to, old_name))
-    cursor.commit()
-    cursor.close()
-    return "Item modified! (Unless this still doesn't work..."
-
-def remove_product(name):
-    cursor = get_db()
-    cursor.execute("delete from products where prod_name='%s';") % (name)
-    cursor.commit()
-    cursor.close()
-    return "Item deleted! (Unless this still doesn't work...)"
-
-def update_user(toset, string1, whereset, string2  ):
-    cursor = get_db().execute('update user set ' + toset + '=' + string1 + ' where ' + whereset + '=' + string2 + ';')
-    cursor.close()
- 
 @app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, "_database", None)
     if db is not None:
         db.close()
             
-
 @app.route('/')
 def index():
     return render_template("index.html")
@@ -118,7 +74,7 @@ def get_specific_product(product_name):
     if found is False:
         return "Not found, try again..."
         
-@app.route('/users', methods=["GET"])
+@app.route('/users', methods=["GET", "POST"])
 def get_users():
     out = {"ok": True, "body": ""}
     body_list = []
@@ -132,11 +88,19 @@ def get_users():
                 }
             body_list.append(temp_dict)
         out["body"] = body_list
-        return render_template("about_me.html", first_name=out["body"][0].get("first_name"), last_name=out["body"][0].get("last_name"), hobbies=out["body"][0].get("hobbies"))
-    # if "POST" in request.method:
-    #     create_user()
+        return render_template("about_me.html", first_name=out["body"][0].get("first_name"), last_name=out["body"][0].get("last_name"), hobbies=out["body"][0].get("hobbies"), results=body_list)
+    if "POST" in request.method:
+        form=request.form
+        create_user(form["first_name"], form["last_name"], form["hobbies"])
+        return "User added!"
     # if "PUT" in request.method:
     #     update_user("last_name","Test","first_name", "Colin")
+
+@app.route('/adduser', methods=["GET", "POST"])
+def new_user():
+    form = AddUserForm()
+    return render_template('adduser.html', form=form)
+
 
 @app.route('/countdown/<int:number>')
 def countdown(number):
